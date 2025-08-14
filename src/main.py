@@ -1,5 +1,5 @@
 from torch.distributions import Categorical
-import gym
+import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
@@ -35,7 +35,7 @@ class Pi(nn.Module):
 
     def act(self, state: np.ndarray):
 
-        x = torch.from_numpy(state.astype(np.float32)) # to tensor
+        x = torch.from_numpy(state) # to tensor
         pdparam = self.forward(x) # forward pass
         pd = Categorical(logits=pdparam) # probability distribution
         action = pd.sample() # pi(a|s) in action via pd
@@ -70,10 +70,10 @@ def main():
     pi = Pi(in_dim, out_dim) # policy pi_theta for REINFORCE
     optimizer = optim.Adam(pi.parameters(), lr=0.01)
     for epi in range(300):
-        state = env.reset()
+        state = env.reset()[0]
         for t in range(200): # cartpole max timestep is 200
             action = pi.act(state)
-            state, reward, done, _ = env.step(action)
+            state, reward, done, _, _ = env.step(action)
             pi.rewards.append(reward)
             env.render()
             if done:
