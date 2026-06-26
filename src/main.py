@@ -64,7 +64,7 @@ def train(pi: Pi, optimizer: torch.optim.Optimizer):
     return loss
 
 def main():
-    env = gym.make('CartPole-v0')
+    env = gym.make('CartPole-v1', render_mode=None)
     in_dim = env.observation_space.shape[0] # 4
     out_dim = env.action_space.n # 2
     pi = Pi(in_dim, out_dim) # policy pi_theta for REINFORCE
@@ -75,7 +75,6 @@ def main():
             action = pi.act(state)
             state, reward, done, _, _ = env.step(action)
             pi.rewards.append(reward)
-            env.render()
             if done:
                 break
         loss = train(pi, optimizer) # train per episode
